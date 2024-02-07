@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-demo-service
+  name: service-demo-service #request para um service eh o nome do service.nome do name space no caso seria => http://service-demo-service.default
 spec:
-  selector:
+  selector: #Agrupa todos os pods atraves do seletor, que tenha a label => app e valor service-demo-app
     app: service-demo-app
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 80 #Vai receber as chamadas na porta 80
+      targetPort: 80 #Vai redirecionar as chamadas para porta 80 dos containers

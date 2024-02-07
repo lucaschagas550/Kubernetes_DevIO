@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   creationTimestamp: null
-  labels:
+  labels: #Service busca pela labels e pelo app com valor service-demo-app atraves do selector
     app: service-demo-app
   name: service-demo-app
 spec:
@@ -18,7 +18,7 @@ spec:
         app: service-demo-app
     spec:
       containers:
-      - image: nginx:alpine
-        name: service-demo-app
-        resources: {}
+        - image: nginx:alpine
+          name: service-demo-app
+          resources: {}
 status: {}
