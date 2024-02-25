@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: database
+    environment: test
+    tier: database
+    app: dev-store
+  name: database
+spec:
+  containers:
+  - env:
+    - name: ACCEPT_EULA
+      value: "Y"
+    - name: SA_PASSWORD
+      value: Teste@123
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    name: database
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
