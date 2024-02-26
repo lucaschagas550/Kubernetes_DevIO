@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: probes
+  name: probes
+spec:
+  containers:
+  - image: desenvolvedorio/dominando-kubernetes:probes
+    name: probes
+    startupProbe:
+      # exec / httpGet / tcpPort
+      httpGet:
+        port: 80
+        path: /startup
+      initialDelaySeconds: 5
+      periodSeconds: 5      
+      failureThreshold: 3
+      timeoutSeconds: 6
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
