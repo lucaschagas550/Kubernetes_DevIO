@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: probes
+  name: probes
+spec:
+  containers:
+  - image: desenvolvedorio/dominando-kubernetes:probes
+    name: probes
+    startupProbe:
+      httpGet:
+        port: 80
+        path: /startup
+        httpHeaders:
+        - name: X-SLEEP-TIME
+          value: "1"
+      periodSeconds: 10
+      initialDelaySeconds: 1
+      timeoutSeconds: 2
+      failureThreshold: 20
+      successThreshold: 1
+    readinessProbe: #Verifica se os Serviços que API precisa esta UP, por exemplo o banco de dados, 
+      httpGet:
+        port: 80
+        path: /readiness
+        httpHeaders:
+        - name: X-SLEEP-TIME
+          value: "1"
+      periodSeconds: 10
+      initialDelaySeconds: 1
+      timeoutSeconds: 2
+      failureThreshold: 3
+      successThreshold: 1
+    livenessProbe: #Verifica se API esta up
+      httpGet:
+        port: 80
+        path: /liveness
+        httpHeaders:
+        - name: X-SLEEP-TIME
+          value: "1"
+      periodSeconds: 10
+      initialDelaySeconds: 30
+      timeoutSeconds: 2
+      failureThreshold: 3
+      successThreshold: 1
+    env:
+    - name: 'FIRST-START'
+      value: "60"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
