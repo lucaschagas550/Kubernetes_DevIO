@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: api-catalog
+spec:
+  replicas: 3
+  selector:
+    app: api-catalog
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: api-catalog
+        environment: test
+        tier: backend
+        project: dev-store
+      name: api-catalog
+    spec:
+      containers:
+      - image: desenvolvedorio/devstore-api-catalog:latest
+        name: api-catalog
+        env: 
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Docker
+        - name: CUSTOMCONNSTR_DefaultConnection
+          value: "Server=172.17.0.4;Database=DSCatalog;MultipleActiveResultSets=true;User Id=sa;Password=Teste@123"
+        - name: AppSettings__DatabaseType
+          value: SqlServer
+        - name: "USE_HTTPS_REDIRECTION"
+          value: "false"
+        - name: "MessageQueueConnection__MessageBus"
+          value: "host=172.17.0.6:5672;publisherConfirms=true;timeout=30;username=devstore;password=devstore"
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 20"]
+        readinessProbe:
+          httpGet:
+            port: 80
+            path: /healthz-infra
+          periodSeconds: 10
+          initialDelaySeconds: 1
+        livenessProbe:
+          httpGet:
+            port: 80
+            path: /healthz
+          periodSeconds: 10
+          initialDelaySeconds: 1
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      initContainers:
+      - name: database-check
+        image: busybox:1.28
+        command: ['sh', '-c', "until nc -z -v -w5 172.17.0.4 1433; do echo aguardando banco de dados; sleep 1; done"]
+      - name: rabbit-check
+        image: busybox:1.28
+        command: ['sh', '-c', "until nc -z -v -w5 172.17.0.6 5672; do echo aguardando rabbitmq; sleep 1; done"]
+
