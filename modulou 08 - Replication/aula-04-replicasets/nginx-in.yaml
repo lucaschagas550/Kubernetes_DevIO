@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchExpressions: 
+    - key: app 
+      operator: In 
+      values: 
+      - nginx 
+    - key: env 
+      operator: NotIn 
+      values: 
+      - dev
+    - key: project
+      operator: Exists
+    - key: team
+      operator: DoesNotExist
+  template:
+    metadata:
+      labels:
+        app: nginx
+        env: production
+        project: dev-store
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
