@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-demo
+spec:
+  completions: 1 #Vai completar uma vez
+  backoffLimit: 3 #Vai ser executado 3 vezes
+  parallelism: 1 #Paralelismo significa que ele vai ter 1 job, for 3 ele ira executar 3x os 3 jobs
+  # activeDeadlineSeconds: 70
+  # suspend: false
+  ttlSecondsAfterFinished: 100 #Aguarda 100 segundos antes de deletar o pod, assim podemos obter o log para observabilidade
+  template:
+    metadata:
+      name: job-demo
+    spec:
+      containers:
+        - name: job-demo
+          image: desenvolvedorio/dominando-kubernetes:pod-lifecycle-failed
+      restartPolicy: OnFailure
