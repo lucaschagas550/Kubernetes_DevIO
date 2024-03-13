@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-demo
+spec:
+  schedule: "* * * * *"
+  successfulJobsHistoryLimit: 0
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      completions: 3
+      backoffLimit: 3
+      parallelism: 1
+      # activeDeadlineSeconds: 70
+      # suspend: false
+      ttlSecondsAfterFinished: 10
+      template:
+        metadata:
+          name: job-demo
+        spec:
+          containers:
+          - name: job-demo
+            image: desenvolvedorio/dominando-kubernetes:pod-lifecycle-succeeded
+          restartPolicy: OnFailure
+
