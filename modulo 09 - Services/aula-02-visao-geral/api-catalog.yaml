@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: api-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: api-catalog
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: api-catalog
+        environment: test
+        tier: backend
+        app: dev-store
+      name: api-catalog
+    spec:
+      containers:
+        - image: desenvolvedorio/devstore-api-catalog:latest
+          name: api-catalog
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Docker
+            - name: CUSTOMCONNSTR_DefaultConnection
+              value: "Server=sqlserver.infra;Database=DSCatalog;MultipleActiveResultSets=true;User Id=sa;Password=Teste@123" #sqlsever.infra (DNS.NAMESPACE) infra eh nome do namespace de onde se contra o banco sqlserver eh o nome do dns, lembrando que o infra, foi informado no comando de criacao do pod exemplo => kubectl create -f api-catalog.yaml -n infra
+            - name: AppSettings__DatabaseType
+              value: SqlServer
+            - name: "USE_HTTPS_REDIRECTION"
+              value: "false"
+            - name: "MessageQueueConnection__MessageBus"
+              value: "host=rabbitmq.infra:5672;publisherConfirms=true;timeout=30;username=devstore;password=devstore"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20"]
+          resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      initContainers:
+        - name: database-check
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z -v -w5 sqlserver.infra 1433; do echo aguardando banco de dados; sleep 1; done",
+            ]
+        - name: rabbit-check
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z -v -w5 rabbitmq.infra 5672; do echo aguardando rabbitmq; sleep 1; done",
+            ]

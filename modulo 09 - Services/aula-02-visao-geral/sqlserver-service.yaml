@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlserver #Nome do dns eh o nome do service, entao sera sqlserver
+spec:
+  selector:
+    run: sqlserver #Cria um Dns para um grupo de pods que atendem a este seletor
+  ports:
+    - protocol: TCP
+      port: 1433 #Porta do Serviço
+      targetPort: 1433 #Porta do Container ou seja do Pod
