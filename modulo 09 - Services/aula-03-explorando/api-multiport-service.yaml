@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: api-multipleports
+  name: api-multipleports
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: api-multipleports
+status:
+  loadBalancer: {}
