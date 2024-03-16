@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: api-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: api-catalog
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: api-catalog
+        environment: test
+        tier: backend
+        app: dev-store
+      name: api-catalog
+    spec:
+      containers:
+        - image: desenvolvedorio/devstore-api-catalog:latest
+          name: api-catalog
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Docker
+            - name: CUSTOMCONNSTR_DefaultConnection
+              value: "Server=sqlserver;Database=DSCatalog;MultipleActiveResultSets=true;User Id=sa;Password=Teste@123" #sqlsever.infra (DNS.NAMESPACE) infra eh nome do namespace de onde se contra o banco sqlserver eh o nome do dns, lembrando que o infra, foi informado no comando de criacao do pod exemplo => kubectl create -f api-catalog.yaml -n infra
+            - name: AppSettings__DatabaseType
+              value: SqlServer
+            - name: "USE_HTTPS_REDIRECTION"
+              value: "false"
+            - name: "MessageQueueConnection__MessageBus"
+              value: "host=rabbitmq:5672;publisherConfirms=true;timeout=30;username=devstore;password=devstore"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20"]
+          resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

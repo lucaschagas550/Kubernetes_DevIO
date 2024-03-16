@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-catalog-ingress
+spec:
+  rules:
+    - host: catalog.devstore.info
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-catalog
+                port:
+                  number: 8080
