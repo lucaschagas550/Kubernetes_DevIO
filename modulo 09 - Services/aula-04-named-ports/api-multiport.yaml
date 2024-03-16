@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: api-multipleports
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: api-multipleports
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: api-multipleports
+      name: api-multipleports
+    spec:
+      containers:
+        - image: desenvolvedorio/dominando-kubernetes:pod-lifecycle-running
+          name: pod-lifecycle-running
+          ports:
+            - containerPort: 8080
+              name: api #nome para a porta, poderia ser http, ou test, somente um nome para a porta, apenas informacional
+          env:
+            - name: ASPNETCORE_URLS #sobreescreve a porta do .net
+              value: "http://+:8080"
+        - image: containous/whoami
+          name: whoami
+          ports:
+            - containerPort: 80
+              name: whoami
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

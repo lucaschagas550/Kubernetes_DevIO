@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: api-multipleports
+  name: api-multipleports
+spec:
+  ports:
+    - name: api # mais de uma porta, tem que colocar nomes, e nomes unicos
+      port: 4200
+      protocol: TCP
+      targetPort: api #porta api que foi criado no arquivo api-multiport, com isto o valor vem de referencia como 8080
+    - name: whoami
+      port: 80
+      protocol: TCP
+      targetPort: whoami
+  selector:
+    app: api-multipleports
+status:
+  loadBalancer: {}
