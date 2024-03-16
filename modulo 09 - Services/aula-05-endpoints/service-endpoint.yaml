@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: banco-de-dados
+spec:
+  ports:
+  - name: sqlserver
+    port: 1433
+
+---
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: banco-de-dados #tem que ter mesmo nome da service no caso eh banco-de-dados
+subsets:
+  - addresses:
+    - ip: 10.244.0.9
+    ports:
+    - name: sqlserver
+      port: 1433
