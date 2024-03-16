@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: api-multipleports-headless
+  name: api-multipleports-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: api
+    port: 4200
+    protocol: TCP
+    targetPort: api
+  - name: whoami
+    port: 80
+    protocol: TCP
+    targetPort: whoami
+  selector:
+    app: api-multipleports
+status:
+  loadBalancer: {}
