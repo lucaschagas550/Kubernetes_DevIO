@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whoami-ingress
+spec:
+  rules:
+  - host: whoami.devstore.info
+    http:
+      paths:
+      - path: /swagger/index.html
+        pathType: Exact
+        backend:
+          service:
+            name: api-catalog
+            port:
+              number: 8080
+      - path: /swagger/v1/swagger.json
+        pathType: Exact
+        backend:
+          service:
+            name: api-catalog
+            port:
+              number: 8080
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: api-multipleports
+            port:
+              number: 80
