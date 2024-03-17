@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-catalog-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/app-root: /swagger
+spec:
+  rules:
+    - host: catalog.devstore.info
+      http:
+        paths:
+          - path: / #se bater no path raiz(catalog.devstore.info), vai para o service api-catalog
+            pathType: Prefix
+            backend:
+              service:
+                name: api-catalog
+                port:
+                  number: 8080
+          - path: /whoami
+            pathType: Prefix
+            backend:
+              service:
+                name: api-multipleports
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whoami-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - host: whoami.devstore.info
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-multipleports
+                port:
+                  number: 80
+          - path: /whoami(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: api-multipleports
+                port:
+                  number: 80
+
