@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-demo
+spec:
+  containers:
+  - image: desenvolvedorio/dominando-kubernetes:volume-demo-create
+    name: write
+    ports:
+    - containerPort: 80
+      protocol: TCP
+    volumeMounts:
+    - name: arquivos
+      mountPath: /data
+  - image: desenvolvedorio/dominando-kubernetes:volume-demo-read
+    name: read
+    ports:
+    - containerPort: 8080
+      protocol: TCP
+    env:
+    - name: ASPNETCORE_URLS
+      value: http://*:8080
+    volumeMounts:
+    - name: arquivos
+      mountPath: /data
+      readOnly: true
+  volumes:
+  - name: arquivos
+    emptyDir: {}

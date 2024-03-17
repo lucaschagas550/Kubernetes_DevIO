@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-demo
+spec:
+  containers:
+    - image: desenvolvedorio/dominando-kubernetes:volume-demo-create
+      name: write
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 80
+          protocol: TCP
+    - image: desenvolvedorio/dominando-kubernetes:volume-demo-read
+      name: read
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
+          protocol: TCP
+      env:
+        - name: ASPNETCORE_URLS #Para evitar conflito de porta nos containers, sendo que esta em um unico pod
+          value: http://*:8080
