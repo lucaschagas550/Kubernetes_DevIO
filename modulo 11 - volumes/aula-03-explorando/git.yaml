@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: static-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-website
+  template:
+    metadata:
+      name: static-website
+      labels:
+        app: static-website
+    spec:
+      containers:
+        - image: nginx:alpine
+          name: web-server
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html #local do arquivo onde o nginx renderiza o html, pode ser landing page
+              readOnly: true
+      initContainers: #ele roda primeiro do que o container em si, por isso busca o repositorio antes de tudo
+        - image: alpine/git
+          name: git
+          command:
+            - git
+            - clone
+            - https://github.com/brunobritodev/kubernetes-site.git
+            - /kubernetes-site
+          volumeMounts:
+            - name: html #associa com o volume
+              mountPath: /kubernetes-site
+      volumes: #Volume substitui /usr/share/nginx/html por nada, por isso se usa o initContainers para obter o conteudo html
+        - name: html
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-website
+spec:
+  selector:
+    app: static-website
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: static-website-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: static-website.devstore.info
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: static-website
+                port:
+                  number: 80
