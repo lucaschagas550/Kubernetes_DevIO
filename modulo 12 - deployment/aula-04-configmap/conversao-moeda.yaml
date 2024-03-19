@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conversao-moeda
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conversao-moeda
+  template:
+    metadata:
+      labels:
+        app: conversao-moeda
+    spec:
+      containers:
+      - image: desenvolvedorio/dominando-kubernetes:conversao-moedas
+        name: conversao-moeda
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: cotacao-volume
+          mountPath: /app/cotacoes.json
+          subPath: cotacoes.json
+      volumes:
+      - name: cotacao-volume
+        configMap:
+          name: cotacao-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: conversao-moeda
+  name: conversao-moeda-service
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: conversao-moeda
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: conversao-moeda-ingress
+  labels:
+    app: conversao-moeda
+spec:
+  rules:
+  - host: conversao-moeda.devstore.info
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: conversao-moeda-service
+            port:
+              number: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cotacao-configmap
+data:
+  cotacoes.json: |
+    {
+      "Moedas": {
+        "EUR": 0.5,
+        "JPY": 110.31,
+        "BRL": 6
+      }
+    }
+  

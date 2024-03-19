@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-update-demo
+  annotations:
+    kubernetes.io/change-cause: "Atualizando a imagem do container"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: pod-update-demo
+  template:
+    metadata:
+      labels:
+        run: pod-update-demo
+    spec:
+      containers:
+        - image: desenvolvedorio/dominando-kubernetes:deployment-demo
+          name: pod-update-demo
+          env:
+            - name: Shutdown
+              valueFrom:
+                configMapKeyRef: #Obtem o valor do configMap da chave "Desligar" para a variavel Shutdown
+                  name: pod-update-demo-config
+                  key: Desligar
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pod-update-demo-config
+data:
+  Desligar: "false"
