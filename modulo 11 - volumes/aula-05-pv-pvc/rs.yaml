@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: volume-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: volume-demo
+  template:
+    metadata:
+      name: volume-demo
+      labels:
+        app: volume-demo
+    spec:
+      containers:
+      - image: desenvolvedorio/dominando-kubernetes:volume-demo-create
+        name: write
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: write
+          protocol: TCP
+        env:
+        - name: SwaggerPath
+          value: write
+        volumeMounts:
+        - name: arquivos
+          mountPath: /data
+      - image: desenvolvedorio/dominando-kubernetes:volume-demo-read
+        name: read
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: read
+          protocol: TCP
+        env:
+        - name: ASPNETCORE_URLS
+          value: http://*:8080
+        - name: SwaggerPath
+          value: read
+        volumeMounts:
+        - name: arquivos
+          mountPath: /data
+          readOnly: true
+      volumes:
+      - name: arquivos
+        persistentVolumeClaim:
+          claimName: volume-demo-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: volume-demo
+  name: volume-demo-service
+spec:
+  ports:
+  - name: write
+    port: 80
+    protocol: TCP
+    targetPort: write
+  - name: read
+    port: 8080
+    protocol: TCP
+    targetPort: read
+  selector:
+    app: volume-demo
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: volume-demo-ingress
+  labels:
+    app: volume-demo
+spec:
+  rules:
+  - host: volume-demo.devstore.info
+    http:
+      paths:
+      - path: /write
+        pathType: Prefix
+        backend:
+          service:
+            name: volume-demo-service
+            port:
+              number: 80
+      - path: /read
+        pathType: Prefix
+        backend:
+          service:
+            name: volume-demo-service
+            port:
+              number: 8080
