@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-catalog
+  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: api-catalog
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: api-catalog
+        environment: test
+        tier: backend
+        app: dev-store
+      name: api-catalog
+    spec:
+      containers:
+        - image: desenvolvedorio/devstore-api-catalog:latest
+          name: api-catalog
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Docker
+            - name: AppSettings__DatabaseType
+              value: SqlServer
+            - name: "USE_HTTPS_REDIRECTION"
+              value: "false"
+          envFrom: #usa o arquivo todo da secret valueFrom usa uma variavel especifica do secret
+            - secretRef:
+                name: rabbit-connection
+            - secretRef:
+                name: database-connection
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20"]
+          resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      initContainers:
+        - name: database-check
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z -v -w5 sqlserver.infra 1433; do echo aguardando banco de dados; sleep 1; done",
+            ]
+        - name: rabbit-check
+          image: busybox:1.28
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z -v -w5 rabbitmq.infra 5672; do echo aguardando rabbitmq; sleep 1; done",
+            ]
