@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpa-load-test
+spec:
+  progressDeadlineSeconds: 30
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hpa-load-test
+  template:
+    metadata:
+      labels:
+        app: hpa-load-test
+    spec:
+      containers:
+      - name: hpa-load-test
+        image: desenvolvedorio/dominando-kubernetes:load-test
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          requests:
+            cpu: "1"
+            memory: "100Mi"
+          limits:
+            cpu: "2"
+            memory: "500Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hpa-load-test-service
+spec:
+  selector:
+    app: hpa-load-test
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: http
+
