@@ -1,0 +1,147 @@
+---
+# Source: api-template/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: load-test-api-template
+  labels:
+    helm.sh/chart: api-template-0.1.0
+    app.kubernetes.io/name: api-template
+    app.kubernetes.io/instance: load-test
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: api-template
+    app.kubernetes.io/instance: load-test
+---
+# Source: api-template/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-test-api-template
+  labels:
+    helm.sh/chart: api-template-0.1.0
+    app.kubernetes.io/name: api-template
+    app.kubernetes.io/instance: load-test
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: api-template
+      app.kubernetes.io/instance: load-test
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: api-template
+        app.kubernetes.io/instance: load-test
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: api-template
+          securityContext:
+            {}
+          image: "desenvolvedorio/dominando-kubernetes:load-test"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /swagger/index.html
+              port: http
+
+          resources:
+            limits:
+              cpu: 1
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+---
+# Source: api-template/templates/hpa.yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: load-test-api-template
+  labels:
+    helm.sh/chart: api-template-0.1.0
+    app.kubernetes.io/name: api-template
+    app.kubernetes.io/instance: load-test
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: load-test-api-template
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+# Source: api-template/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: load-test-api-template
+  labels:
+    helm.sh/chart: api-template-0.1.0
+    app.kubernetes.io/name: api-template
+    app.kubernetes.io/instance: load-test
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  rules:
+    - host: "load-test.devstore.info"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: load-test-api-template
+                port:
+                  number: 80
+---
+# Source: api-template/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "load-test-api-template-test-connection"
+  labels:
+    helm.sh/chart: api-template-0.1.0
+    app.kubernetes.io/name: api-template
+    app.kubernetes.io/instance: load-test
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['load-test-api-template:80']
+  restartPolicy: Never
