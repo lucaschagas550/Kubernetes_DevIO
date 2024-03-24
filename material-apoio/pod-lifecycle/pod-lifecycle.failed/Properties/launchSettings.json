@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "pod-lifecycle.failed": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

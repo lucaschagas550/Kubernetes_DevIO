@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "SZXr2CTtfsqFsPS0/gSfB84ndf98dRrYaE+Ej0pFOCrRg12Bgeac3jc6rxl4tlXQpOcFwOnHdjPTLyFLTIDHNw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\lucas\\Downloads\\Kubernets\\material-apoio\\pod-lifecycle\\pod-lifecycle.succeeded\\pod-lifecycle.succeeded.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\lucas\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.17.0\\microsoft.visualstudio.azure.containers.tools.targets.1.17.0.nupkg.sha512"
+  ],
+  "logs": []
+}

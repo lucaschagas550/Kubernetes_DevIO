@@ -1,0 +1,21 @@
+image:
+  repository: desenvolvedorio/devstore-api-bff-checkout
+  tag: "1.3.1"
+
+secretRefs:
+  - rabbit-connection
+
+environment:
+  ShoppingCartUrl: "https://api-cart"
+  CatalogUrl: "https://api-catalog"
+  CustomerUrl: "https://api-customer"
+  PaymentUrl: "https://api-billing"
+  OrderUrl: "https://api-orders"
+
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: 443
+    scheme: HTTPS
+  initialDelaySeconds: 3
+  periodSeconds: 10

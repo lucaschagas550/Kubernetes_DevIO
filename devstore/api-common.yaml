@@ -1,0 +1,54 @@
+serviceAccount:
+  create: false
+
+ingress:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 500Mi
+  requests:
+    cpu: 100m
+    memory: 200Mi
+
+readinessProbe:
+  httpGet:
+    path: /healthz-infra
+    port: 443
+    scheme: HTTPS
+  initialDelaySeconds: 3
+  periodSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 443
+    scheme: HTTPS
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetMemoryUtilizationPercentage: 70
+
+service:
+  targetPort: https
+  port: 443
+
+environment:
+  ASPNETCORE_ENVIRONMENT: Docker
+  ASPNETCORE_URLS: https://+
+  AppSettings__DatabaseType: Postgre
+  AppSettings__JwksUri: "https://api-identity/jwks"
+  ASPNETCORE_Kestrel__Certificates__Default__Path: /https/devstore.academy-localhost.pfx
+  ASPNETCORE_Kestrel__Certificates__Default__Password:
+    valueFrom:
+      secretKeyRef:
+        name: devstore-ssl
+        key: password
+
+pfx:
+  enabled: true

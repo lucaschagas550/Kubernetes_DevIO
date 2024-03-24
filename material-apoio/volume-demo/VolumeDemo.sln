@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33110.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolumeDemo.CreateFiles", "volume-demo.create\VolumeDemo.CreateFiles.csproj", "{D1D82A01-7BEF-4717-B0A9-00BEC87081A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolumeDemo.ListFiles", "volume-demo.read\VolumeDemo.ListFiles.csproj", "{9489177B-A559-44E5-A775-791079ECFC86}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1D82A01-7BEF-4717-B0A9-00BEC87081A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1D82A01-7BEF-4717-B0A9-00BEC87081A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1D82A01-7BEF-4717-B0A9-00BEC87081A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1D82A01-7BEF-4717-B0A9-00BEC87081A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9489177B-A559-44E5-A775-791079ECFC86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9489177B-A559-44E5-A775-791079ECFC86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9489177B-A559-44E5-A775-791079ECFC86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9489177B-A559-44E5-A775-791079ECFC86}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CA25BFBF-2B74-49C7-B273-A65ED87CEDF2}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,45 @@
+image:
+  repository: desenvolvedorio/devstore-web-mvc-ecommerce
+  tag: "1.3.1"
+
+environment:
+  ASPNETCORE_ENVIRONMENT: Docker
+  ASPNETCORE_URLS: http://+
+  AppSettings__JwksUri: "https://api-identity/jwks"
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+  AuthUrl: "https://api-identity"
+  CatalogUrl: "https://api-catalog"
+  CustomerUrl: "https://api-customer"
+  CheckoutBffUrl: "https://api-bff-checkout"
+
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: 80
+    scheme: HTTP
+  initialDelaySeconds: 3
+  periodSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 80
+    scheme: HTTP
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+service:
+  port: 80
+  targetPort: http
+
+ingress:
+  enabled: true
+  hosts:
+    - host: devstore.info
+      paths:
+        - path: /
+          pathType: Prefix
+
+pfx:
+  enabled: false

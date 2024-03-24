@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: infra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: rabbitmq
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: rabbitmq
+        environment: test
+        tier: queue
+        app: dev-store
+      name: rabbitmq
+      namespace: infra
+    spec:
+      containers:
+      - image: rabbitmq:3-management
+        name: rabbitmq
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: "devstore"
+        - name: RABBITMQ_DEFAULT_PASS
+          value: "devstore"
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

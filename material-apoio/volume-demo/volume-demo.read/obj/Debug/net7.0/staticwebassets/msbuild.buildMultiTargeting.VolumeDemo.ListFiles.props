@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\VolumeDemo.ListFiles.props" />
+</Project>
