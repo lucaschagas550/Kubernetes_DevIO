@@ -24,14 +24,14 @@ spec:
           averageUtilization: 70 #Na media tem que estar abaixo de 70%, se ultrapassar vai acrescenter um novo pod
   behavior:
     scaleDown:
-      stabilizationWindowSeconds: 30
+      stabilizationWindowSeconds: 30 #Depois que removeu um pod aguarda 30 segundos para ver as metricas novamente
       policies:
         - type: Percent
-          value: 50
+          value: 50 # vai diminuir de 50% a cada 30 segundos
           periodSeconds: 30
     scaleUp:
-      stabilizationWindowSeconds: 30
+      stabilizationWindowSeconds: 30 #Depois que adicionou um pod aguarda 30 segundos para ver as metricas novamente
       policies:
         - type: Percent
-          value: 50
+          value: 50 # vai aumentar em 50% a cada 30 segundos
           periodSeconds: 30

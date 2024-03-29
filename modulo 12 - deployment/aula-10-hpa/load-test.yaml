@@ -14,19 +14,19 @@ spec:
         app: hpa-load-test
     spec:
       containers:
-      - name: hpa-load-test
-        image: desenvolvedorio/dominando-kubernetes:load-test
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
-          name: http
-        resources:
-          requests:
-            cpu: "1"
-            memory: "100Mi"
-          limits:
-            cpu: "2"
-            memory: "500Mi"
+        - name: hpa-load-test
+          image: desenvolvedorio/dominando-kubernetes:load-test
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+          resources:
+            requests: #request eh sempre menor do que o limits, request eh o que sempre esta reservado para a maquina e limtis eh ate onde ela pode aumentar
+              cpu: "1"
+              memory: "100Mi"
+            limits:
+              cpu: "2"
+              memory: "500Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -39,4 +39,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: http
-
